@@ -2,11 +2,12 @@
 import deepxde as dde
 import numpy as np
 # Backend tensorflow.compat.v1 or tensorflow
-from deepxde.backend import tf
+# from deepxde.backend import tf
 # Backend pytorch
-# import torch
+import torch
 # Backend paddle
 # import paddle
+import matplotlib.pyplot as plt
 
 
 C = dde.Variable(2.0)
@@ -16,19 +17,19 @@ def pde(x, y):
     dy_t = dde.grad.jacobian(y, x, i=0, j=1)
     dy_xx = dde.grad.hessian(y, x, i=0, j=0)
     # Backend tensorflow.compat.v1 or tensorflow
-    return (
-        dy_t
-        - C * dy_xx
-        + tf.exp(-x[:, 1:])
-        * (tf.sin(np.pi * x[:, 0:1]) - np.pi ** 2 * tf.sin(np.pi * x[:, 0:1]))
-    )
-    # Backend pytorch
     # return (
     #     dy_t
     #     - C * dy_xx
-    #     + torch.exp(-x[:, 1:])
-    #     * (torch.sin(np.pi * x[:, 0:1]) - np.pi ** 2 * torch.sin(np.pi * x[:, 0:1]))
+    #     + tf.exp(-x[:, 1:])
+    #     * (tf.sin(np.pi * x[:, 0:1]) - np.pi ** 2 * tf.sin(np.pi * x[:, 0:1]))
     # )
+    # Backend pytorch
+    return (
+        dy_t
+        - C * dy_xx
+        + torch.exp(-x[:, 1:])
+        * (torch.sin(np.pi * x[:, 0:1]) - np.pi ** 2 * torch.sin(np.pi * x[:, 0:1]))
+    )
     # Backend paddle
     # return (
     #     dy_t
@@ -75,6 +76,6 @@ model.compile(
     "adam", lr=0.001, metrics=["l2 relative error"], external_trainable_variables=C
 )
 variable = dde.callbacks.VariableValue(C, period=1000)
-losshistory, train_state = model.train(iterations=50000, callbacks=[variable])
+losshistory, train_state = model.train(iterations=1000, callbacks=[variable])
 
 dde.saveplot(losshistory, train_state, issave=True, isplot=True)

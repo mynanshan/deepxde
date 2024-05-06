@@ -44,6 +44,7 @@ from .icbc import (
     PointSetBC,
     PointSetOperatorBC,
     IC,
+    DataPoints
 )
 
 maps = nn
