@@ -17,7 +17,7 @@ class IC:
         self.func = npfunc_range_autocache(
             utils.return_tensor(func), force_nocache=~use_cache)
         self.on_initial = lambda x, on: np.array(
-            [on_initial(x[i], on[i]) for i in range(len(x))
+            [on_initial(x[i], on[i]) for i in range(len(x))]
         )
         self.component = component
 
