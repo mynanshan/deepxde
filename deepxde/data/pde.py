@@ -93,6 +93,7 @@ class PDE(Data):
         self.num_domain = num_domain
         self.num_boundary = num_boundary
         self.train_distribution = train_distribution
+        # self.adaptive_sample_weights = False
         if config.hvd is not None:
             if self.train_distribution != "pseudo":
                 raise ValueError(
@@ -119,6 +120,10 @@ class PDE(Data):
         self.train_x_all = None
         self.train_x_bc = None
         self.num_bcs = None
+
+        # record residuals
+        # self.pde_sq_resid = None
+        # self.data_sq_resid = None
 
         # these include both BC and PDE points
         self.train_x, self.train_y = None, None
@@ -170,14 +175,17 @@ class PDE(Data):
         losses = [
             loss_fn[i](bkd.zeros_like(error), error) for i, error in enumerate(error_f)
         ]
+        # residuals = []
         for i, bc in enumerate(self.bcs):
             beg, end = bcs_start[i], bcs_start[i + 1]
             # The same BC points are used for training and testing.
             error = bc.error(self.train_x, inputs, outputs, beg, end)
+            # residuals.append(error)
             if isinstance(bc, DataPoints):
                 losses.append(error)
             else:
                 losses.append(loss_fn[len(error_f) + i](bkd.zeros_like(error), error))
+        # residuals.append(error_f)
         return losses
 
     @run_if_all_none("train_x", "train_y", "train_aux_vars")

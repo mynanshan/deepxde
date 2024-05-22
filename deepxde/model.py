@@ -583,6 +583,8 @@ class Model:
         model_restore_path=None,
         model_save_path=None,
         epochs=None,
+        # adaptive_sample_weights=False,
+        # adaptive_sample_period=1000
     ):
         """Trains the model.
 
@@ -616,6 +618,7 @@ class Model:
             )
             iterations = epochs
         self.batch_size = batch_size
+        # self.data.adaptive_sample_weights = adaptive_sample_weights
         self.callbacks = CallbackList(callbacks=callbacks)
         self.callbacks.set_model(self)
         if disregard_previous_best:
