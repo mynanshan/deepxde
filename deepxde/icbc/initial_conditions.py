@@ -12,9 +12,10 @@ from .. import utils
 class IC:
     """Initial conditions: y([x, t0]) = func([x, t0])."""
 
-    def __init__(self, geom, func, on_initial, component=0):
+    def __init__(self, geom, func, on_initial, component=0, use_cache=True):
         self.geom = geom
-        self.func = npfunc_range_autocache(utils.return_tensor(func))
+        self.func = npfunc_range_autocache(
+            utils.return_tensor(func), force_nocache=~use_cache)
         self.on_initial = lambda x, on: np.array(
             [on_initial(x[i], on[i]) for i in range(len(x))]
         )
